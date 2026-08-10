@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AcctPrompt — ร้านเครื่องมือบัญชี-ภาษี</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#262A38;
+    --ink-soft:#5B6072;
+    --paper:#FFFFFF;
+    --surface:#FFFFFF;
+    --line:#E3E6ED;
+    --brand-deep:#2F1B5C;
+    --brand:#4B2E8F;
+    --brand-soft:#EFEAFB;
+    --stamp:#1CA483;
+    --stamp-hover:#168B6E;
+    --stamp-ink:#0F6B52;
+    --stamp-soft:#DEFBF1;
+    --gold-ink:#8A5A0B;
+    --gold-soft:#FBF0D9;
+    --good:#166534;
+    --good-soft:#E3F5E9;
+    --bad:#B42318;
+    --bad-soft:#FBEAE8;
+    --radius:14px;
+  }
+  :root[data-theme="dark"]{
+    --ink:#EDEFF5; --ink-soft:#A7ACC0; --paper:#140F24; --surface:#1E1836; --line:#362C56;
+    --brand-deep:#4B2E8F; --brand:#B7A0F5; --brand-soft:#2A1F52;
+    --stamp:#22B893; --stamp-hover:#3ECFA0; --stamp-ink:#7FE8C4; --stamp-soft:#123A2E;
+    --gold-ink:#E7C27A; --gold-soft:#332608; --good:#4ADE80; --good-soft:#123322;
+    --bad:#F1948A; --bad-soft:#3A1815;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#EDEFF5; --ink-soft:#A7ACC0; --paper:#140F24; --surface:#1E1836; --line:#362C56;
+      --brand-deep:#4B2E8F; --brand:#B7A0F5; --brand-soft:#2A1F52;
+      --stamp:#22B893; --stamp-hover:#3ECFA0; --stamp-ink:#7FE8C4; --stamp-soft:#123A2E;
+      --gold-ink:#E7C27A; --gold-soft:#332608; --good:#4ADE80; --good-soft:#123322;
+      --bad:#F1948A; --bad-soft:#3A1815;
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans Thai","Noto Sans Thai","Segoe UI",system-ui,sans-serif;
+    font-size:16px; line-height:1.65;
+  }
+  h1,h2,h3,.wordmark,.eyebrow{ font-family:"Prompt","Segoe UI Semibold",system-ui,sans-serif; text-wrap:balance; }
+  .mono, .stamp-code, .plan-price{ font-family:"IBM Plex Mono","Cascadia Code",ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+  a{color:var(--brand);}
+  button{font-family:inherit;}
+  :focus-visible{outline:2.5px solid var(--stamp); outline-offset:2px;}
+
+  .promo{ background:linear-gradient(90deg, var(--brand-deep), var(--brand) 50%, var(--brand-deep)); color:#fff; text-align:center; font-size:13px; font-weight:600; padding:9px 16px; letter-spacing:.01em; }
+
+  header.topbar{ background:var(--surface); border-bottom:1px solid var(--line); padding:16px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; position:sticky; top:0; z-index:30; }
+  .wordmark{ font-size:21px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:baseline; gap:2px; }
+  .wordmark .acct{color:var(--ink);}
+  .wordmark .prompt{color:var(--stamp);}
+  .topbar-actions{display:flex; align-items:center; gap:12px; position:relative;}
+  .user-chip{ font-size:13px; color:var(--ink-soft); display:flex; align-items:center; gap:8px; }
+  .btn-ghost{ background:none; border:1px solid var(--line); color:var(--ink); border-radius:999px; padding:8px 16px; font-size:13.5px; font-weight:600; cursor:pointer; }
+  .btn-ghost:hover{border-color:var(--brand); color:var(--brand);}
+  .cart-btn{ background:var(--brand-deep); color:#fff; border:none; border-radius:999px; padding:9px 18px 9px 16px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; }
+  .cart-btn:hover{background:var(--brand);}
+  .cart-count{ background:var(--stamp); color:#fff; font-size:11px; font-weight:700; min-width:18px; height:18px; border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 5px; }
+
+  main{max-width:1120px; margin:0 auto; padding:0 28px 90px;}
+
+  .hero{ background:var(--surface); border-bottom:1px solid var(--line); padding:52px 28px 40px; }
+  .hero-inner{max-width:1120px; margin:0 auto;}
+  .eyebrow{ font-family:"IBM Plex Mono",monospace; font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); margin:0 0 14px; }
+  .hero h1{ font-size:clamp(28px, 4vw, 42px); line-height:1.2; font-weight:700; color:var(--ink); margin:0 0 16px; max-width:15ch; }
+  .hero p{ font-size:16.5px; color:var(--ink-soft); max-width:56ch; margin:0 0 26px; }
+  .hero-cta-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .btn-stamp{ background:var(--stamp); color:#fff; border:none; border-radius:10px; padding:13px 24px; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 8px 22px rgba(28,164,131,.25); }
+  .btn-stamp:hover{background:var(--stamp-hover);}
+  .trust-line{ display:flex; gap:22px; flex-wrap:wrap; font-size:13px; color:var(--ink-soft); margin-top:28px; padding-top:20px; border-top:1px dashed var(--line); }
+  .trust-line span{display:flex; align-items:center; gap:6px;}
+  .trust-line .dot{width:5px;height:5px;border-radius:50%;background:var(--stamp); display:inline-block;}
+
+  .owned{margin-top:44px;}
+  .owned-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px;}
+  .owned-head h2{font-size:19px; margin:0;}
+  .owned-head .hint{font-size:13px; color:var(--ink-soft);}
+  .owned-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:14px; }
+  .owned-card{ background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--good); border-radius:12px; padding:16px 18px; }
+  .owned-card .code{ font-size:11px; background:var(--good-soft); color:var(--good); padding:2px 7px; border-radius:5px; font-weight:700; }
+  .owned-card h3{font-size:15.5px; margin:10px 0 4px;}
+  .owned-card .expiry{font-size:12.5px; color:var(--ink-soft);}
+  .empty-hint{font-size:13.5px; color:var(--ink-soft); padding:14px 0;}
+
+  .catbar{ display:flex; gap:8px; flex-wrap:wrap; margin:40px 0 20px; }
+  .pill{ border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:8px 16px; font-size:13.5px; font-weight:600; cursor:pointer; }
+  .pill.active{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(268px, 1fr)); gap:18px; }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 20px 18px; display:flex; flex-direction:column; gap:12px; }
+  .card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
+  .stamp-code{ display:inline-block; font-size:12px; font-weight:700; letter-spacing:.06em; color:var(--brand); background:var(--brand-soft); border:1px solid var(--line); border-radius:7px; padding:4px 8px; transform:rotate(-2deg); }
+  .card h3{font-size:16.5px; margin:0; line-height:1.3;}
+  .card p{font-size:13.5px; color:var(--ink-soft); margin:0; min-height:2.6em;}
+
+  .plan-toggle{ display:flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; font-size:12.5px; }
+  .plan-toggle button{ flex:1; background:var(--surface); color:var(--ink-soft); border:none; padding:7px 0; cursor:pointer; font-weight:600; }
+  .plan-toggle button + button{border-left:1px dashed var(--line);}
+  .plan-toggle button.on{background:var(--brand-soft); color:var(--brand);}
+
+  .seat-toggle{ display:flex; gap:6px; }
+  .seat-toggle button{ flex:1; background:var(--surface); color:var(--ink-soft); border:1px solid var(--line); border-radius:7px; padding:6px 0; cursor:pointer; font-size:12px; font-weight:600; font-family:"IBM Plex Mono",monospace; }
+  .seat-toggle button.on{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .toggle-label{ font-size:10.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.07em; margin:2px 0 -4px; }
+
+  .price-row{ display:flex; align-items:baseline; justify-content:space-between; border-top:1px dashed var(--line); padding-top:12px; margin-top:2px; }
+  .price-row .label{font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em;}
+  .plan-price{font-size:21px; font-weight:700;}
+  .plan-price .unit{font-size:12px; font-weight:500; color:var(--ink-soft);}
+
+  .card-actions{display:flex; gap:8px; margin-top:2px;}
+  .btn-buy{ flex:1; background:var(--stamp); color:#fff; border:none; border-radius:8px; padding:10px 0; font-size:13.5px; font-weight:700; cursor:pointer; }
+  .btn-buy:hover{background:var(--stamp-hover);}
+  .btn-buy:disabled{background:var(--line); color:var(--ink-soft); cursor:not-allowed;}
+  .btn-cart{ width:42px; background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:8px; cursor:pointer; font-size:15px; }
+  .btn-cart:hover{border-color:var(--brand);}
+
+  footer{ border-top:1px solid var(--line); margin-top:70px; padding:34px 28px 40px; background:var(--surface); }
+  .foot-inner{max-width:1120px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px;}
+  .foot-inner .wordmark{font-size:16px; margin-bottom:6px;}
+  footer p{font-size:12.5px; color:var(--ink-soft); max-width:40ch; margin:0;}
+  .foot-cols{display:flex; gap:48px; flex-wrap:wrap;}
+  .foot-col h4{font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin:0 0 10px;}
+  .foot-col a{display:block; font-size:13.5px; color:var(--ink); text-decoration:none; margin-bottom:7px;}
+  .foot-col a:hover{color:var(--brand);}
+
+  .msg-banner{ max-width:1120px; margin:16px auto 0; padding:0 28px; }
+  .msg-banner .box{ border-radius:10px; padding:12px 16px; font-size:13.5px; display:flex; justify-content:space-between; gap:10px; align-items:center; }
+  .msg-banner .box.ok{background:var(--good-soft); color:var(--good);}
+  .msg-banner .box.err{background:var(--bad-soft); color:var(--bad);}
+  .msg-banner .box button{background:none; border:none; color:inherit; cursor:pointer; font-size:16px; line-height:1;}
+
+  /* ── Modal (auth) ─────────────────────────────────────── */
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(20,15,36,.5); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
+  .modal-backdrop.open{display:flex;}
+  .modal{ background:var(--surface); border-radius:16px; padding:26px 26px 22px; width:100%; max-width:380px; border:1px solid var(--line); }
+  .modal h2{font-size:19px; margin:0 0 4px;}
+  .modal .sub{font-size:13px; color:var(--ink-soft); margin:0 0 18px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:12.5px; color:var(--ink-soft); margin-bottom:5px;}
+  .field input{ width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:14px; background:var(--paper); color:var(--ink); font-family:inherit; }
+  .field input:focus{border-color:var(--brand);}
+  .modal-actions{display:flex; flex-direction:column; gap:10px; margin-top:16px;}
+  .modal-switch{font-size:13px; color:var(--ink-soft); text-align:center; margin-top:14px;}
+  .modal-switch button{background:none; border:none; color:var(--brand); font-weight:600; cursor:pointer; font-size:13px; padding:0;}
+  .modal-close{position:absolute; top:16px; right:18px; background:none; border:none; font-size:18px; cursor:pointer; color:var(--ink-soft);}
+  .modal-wrap{position:relative;}
+  .modal-error{font-size:12.5px; color:var(--bad); margin:-4px 0 10px;}
+
+  /* ── Cart panel ───────────────────────────────────────── */
+  .cart-panel{ position:absolute; top:calc(100% + 10px); right:0; width:320px; background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 16px 40px rgba(20,15,36,.18); padding:16px; display:none; z-index:40; }
+  .cart-panel.open{display:block;}
+  .cart-panel h3{font-size:14.5px; margin:0 0 10px;}
+  .cart-item{ display:flex; justify-content:space-between; gap:8px; font-size:13px; padding:8px 0; border-bottom:1px solid var(--line); }
+  .cart-item .meta{color:var(--ink-soft); font-size:11.5px;}
+  .cart-item button{background:none; border:none; color:var(--bad); cursor:pointer; font-size:16px; line-height:1;}
+  .cart-empty{font-size:13px; color:var(--ink-soft); padding:10px 0;}
+  .cart-total{ display:flex; justify-content:space-between; font-weight:700; font-size:14.5px; margin:12px 0; }
+  .cart-checkout{ width:100%; background:var(--stamp); color:#fff; border:none; border-radius:8px; padding:10px 0; font-weight:700; cursor:pointer; }
+  .cart-checkout:hover{background:var(--stamp-hover);}
+  .cart-checkout:disabled{background:var(--line); color:var(--ink-soft); cursor:not-allowed;}
+
+  @media (max-width:640px){
+    header.topbar{padding:14px 18px;}
+    .hero{padding:36px 18px 30px;}
+    main{padding:0 18px 70px;}
+    .cart-panel{width:calc(100vw - 36px); right:-14px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="promo">🧾 สมัครสมาชิกวันนี้ รับส่วนลดสูงสุด 30% — ต่ออายุฟรี 1 เดือนเมื่อซื้อแบบรายปี</div>
+
+<header class="topbar">
+  <div class="wordmark"><span class="acct">Acct</span><span class="prompt">Prompt</span></div>
+  <div class="topbar-actions" id="topbarActions">
+    <button class="btn-ghost" id="loginBtn">เข้าสู่ระบบ</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">ACCTPROMPT / TOOLS FOR ACCOUNTANTS</p>
+    <h1>เครื่องมือบัญชี-ภาษี แยกเป็นชิ้น<br>ซื้อเฉพาะที่ใช้จริง</h1>
+    <p>ไม่ต้องเหมาแพ็กใหญ่ — เลือกซื้อทีละเครื่องมือตามงานที่ทำจริง จ่ายรายเดือนหรือรายปีก็ได้ เปิดใช้งานทันทีหลังชำระเงินยืนยัน</p>
+    <div class="hero-cta-row">
+      <button class="btn-stamp" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">ดูเครื่องมือทั้งหมด →</button>
+    </div>
+    <div class="trust-line">
+      <span><span class="dot"></span>ยกเลิกเมื่อไหร่ก็ได้ ไม่ผูกสัญญา</span>
+      <span><span class="dot"></span>เปิดใช้งานทันทีหลังยืนยันชำระเงิน</span>
+      <span><span class="dot"></span>ซัพพอร์ตทุกวัน</span>
+    </div>
+  </div>
+</section>
+
+<div class="msg-banner" id="msgBanner"></div>
+
+<main>
+  <section class="owned" id="ownedSection" style="display:none;">
+    <div class="owned-head">
+      <h2>แอปที่คุณซื้อแล้ว</h2>
+      <span class="hint">คลิกเพื่อเปิดใช้งาน</span>
+    </div>
+    <div class="owned-grid" id="ownedGrid"></div>
+  </section>
+
+  <div class="catbar" id="catbar">
+    <button class="pill active" data-cat="all">ทั้งหมด</button>
+    <button class="pill" data-cat="tax">ยื่นแบบและภาษี</button>
+    <button class="pill" data-cat="doc">จัดการเอกสาร</button>
+    <button class="pill" data-cat="ops">บัญชีและองค์กร</button>
+  </div>
+
+  <div class="grid" id="catalog"><p class="empty-hint">กำลังโหลดแคตตาล็อก...</p></div>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="wordmark"><span class="acct">Acct</span><span class="prompt">Prompt</span></div>
+      <p>เครื่องมือบัญชี-ภาษีสำหรับสำนักงานบัญชีและธุรกิจ แยกซื้อทีละตัว จ่ายเท่าที่ใช้</p>
+    </div>
+    <div class="foot-cols">
+      <div class="foot-col">
+        <h4>บริษัท</h4>
+        <a href="#">เกี่ยวกับเรา</a>
+        <a href="#">ติดต่อเรา</a>
+      </div>
+      <div class="foot-col">
+        <h4>ช่วยเหลือ</h4>
+        <a href="#">คำถามที่พบบ่อย</a>
+        <a href="#">นโยบายคืนเงิน</a>
+      </div>
+      <div class="foot-col">
+        <h4>ชำระเงิน</h4>
+        <a href="#">บัตรเครดิต · พร้อมเพย์ · โอนธนาคาร</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── Auth modal ─────────────────────────────────────────── -->
+<div class="modal-backdrop" id="authBackdrop">
+  <div class="modal modal-wrap">
+    <button class="modal-close" id="authClose">✕</button>
+    <div id="authLoginView">
+      <h2>เข้าสู่ระบบ</h2>
+      <p class="sub">ใช้บัญชีที่สมัครไว้กับ AcctPrompt</p>
+      <div class="modal-error" id="loginError" style="display:none;"></div>
+      <div class="field"><label>อีเมล</label><input type="email" id="loginEmail" placeholder="you@example.com"></div>
+      <div class="field"><label>รหัสผ่าน</label><input type="password" id="loginPassword" placeholder="รหัสผ่าน"></div>
+      <div class="modal-actions"><button class="btn-stamp" id="loginSubmit">เข้าสู่ระบบ</button></div>
+      <div class="modal-switch">ยังไม่มีบัญชี? <button id="showSignup">สมัครสมาชิก</button></div>
+    </div>
+    <div id="authSignupView" style="display:none;">
+      <h2>สมัครสมาชิก</h2>
+      <p class="sub">ใช้อีเมลจริง — ใช้ยืนยันคำสั่งซื้อและเปิดใช้งานเครื่องมือ</p>
+      <div class="modal-error" id="signupError" style="display:none;"></div>
+      <div class="field"><label>ชื่อ-นามสกุล / ชื่อกิจการ</label><input type="text" id="signupName" placeholder="เช่น สำนักงานบัญชี ABC"></div>
+      <div class="field"><label>อีเมล</label><input type="email" id="signupEmail" placeholder="you@example.com"></div>
+      <div class="field"><label>รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label><input type="password" id="signupPassword" placeholder="รหัสผ่าน"></div>
+      <div class="modal-actions"><button class="btn-stamp" id="signupSubmit">สมัครสมาชิก</button></div>
+      <div class="modal-switch">มีบัญชีอยู่แล้ว? <button id="showLogin">เข้าสู่ระบบ</button></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// anon key is designed to be public/embeddable — real access control is
+// Row Level Security in the database, not secrecy of this key.
+const SUPABASE_URL = 'https://cxyehagldwanxfjfwopj.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4eWVoYWdsZHdhbnhmamZ3b3BqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNDUsImV4cCI6MjEwMTkxMTI0NX0.TXouM5zmc2_ifTlPz90RcTYpJez9rGuyP_7MLPJwEHM';
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const CATEGORY_LABEL = { tax: 'ยื่นแบบและภาษี', doc: 'จัดการเอกสาร', ops: 'บัญชีและองค์กร' };
+const BILLING_LABEL = { monthly: 'รายเดือน', yearly: 'รายปี', one_time: 'ครั้งเดียว' };
+const BILLING_UNIT = { monthly: '/เดือน', yearly: '/ปี', one_time: '' };
+// purely cosmetic short codes — not backed by a DB column, safe to keep static
+const STAMP_CODE = {
+  'kbank-fee': 'KBK', 'ktc-fee': 'KTC', 'pdf-unlock': 'PDF', 'online-fee': 'ONL',
+  'bai-rub-rong': 'BRR', 'bai-50-thawi': 'W50', 'pnd3-txtfix': 'P03', 'pnd53-txtfix': 'P53',
+  'order-sku': 'SKU', 'reconcile-online': 'RCO', 'flow-direct': 'FLW', 'expense-allocation': 'ALO',
+};
+
+let currentUser = null;
+let toolsData = [];
+let activeCat = 'all';
+let cart = JSON.parse(localStorage.getItem('ap_cart') || '[]');
+
+function money(n){ return Math.round(n).toLocaleString('th-TH'); }
+function stampCode(slug){ return STAMP_CODE[slug] || slug.slice(0,3).toUpperCase(); }
+
+function showMsg(text, kind){
+  const el = document.getElementById('msgBanner');
+  el.innerHTML = `<div class="box ${kind}"><span>${text}</span><button onclick="this.closest('.box').remove()">✕</button></div>`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── Auth ────────────────────────────────────────────────────────────────
+async function refreshSession(){
+  const { data:{ session } } = await sb.auth.getSession();
+  currentUser = session?.user || null;
+  renderAuthUI();
+}
+
+function renderAuthUI(){
+  const box = document.getElementById('topbarActions');
+  if (currentUser){
+    box.innerHTML = `
+      <div class="user-chip">👤 ${currentUser.email}</div>
+      <div style="position:relative;">
+        <button class="cart-btn" id="cartBtn">ตะกร้า <span class="cart-count" id="cartCount">0</span></button>
+        <div class="cart-panel" id="cartPanel"></div>
+      </div>
+      <button class="btn-ghost" id="logoutBtn">ออกจากระบบ</button>
+    `;
+    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+    document.getElementById('cartBtn').addEventListener('click', toggleCartPanel);
+    document.getElementById('ownedSection').style.display = '';
+    loadOwned();
+  } else {
+    box.innerHTML = `<button class="btn-ghost" id="loginBtn">เข้าสู่ระบบ</button>`;
+    document.getElementById('loginBtn').addEventListener('click', () => openAuthModal('login'));
+    document.getElementById('ownedSection').style.display = 'none';
+  }
+  updateCartUI();
+}
+
+function openAuthModal(view){
+  document.getElementById('authBackdrop').classList.add('open');
+  document.getElementById('authLoginView').style.display = view === 'signup' ? 'none' : '';
+  document.getElementById('authSignupView').style.display = view === 'signup' ? '' : 'none';
+}
+function closeAuthModal(){ document.getElementById('authBackdrop').classList.remove('open'); }
+
+document.getElementById('authClose').addEventListener('click', closeAuthModal);
+document.getElementById('authBackdrop').addEventListener('click', (e) => { if (e.target.id === 'authBackdrop') closeAuthModal(); });
+document.getElementById('showSignup').addEventListener('click', () => openAuthModal('signup'));
+document.getElementById('showLogin').addEventListener('click', () => openAuthModal('login'));
+
+document.getElementById('loginSubmit').addEventListener('click', async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error){ errEl.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'; errEl.style.display=''; return; }
+  await refreshSession();
+  closeAuthModal();
+  showMsg('เข้าสู่ระบบสำเร็จ', 'ok');
+});
+
+document.getElementById('signupSubmit').addEventListener('click', async () => {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const errEl = document.getElementById('signupError');
+  errEl.style.display = 'none';
+  if (password.length < 6){ errEl.textContent = 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร'; errEl.style.display=''; return; }
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if (error){ errEl.textContent = error.message; errEl.style.display=''; return; }
+  if (data.session){
+    if (name) await sb.rpc('update_my_profile', { p_full_name: name });
+    await refreshSession();
+    closeAuthModal();
+    showMsg('สมัครสมาชิกสำเร็จ', 'ok');
+  } else {
+    closeAuthModal();
+    showMsg('สมัครสมาชิกสำเร็จ — กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ', 'ok');
+  }
+});
+
+async function handleLogout(){
+  await sb.auth.signOut();
+  currentUser = null;
+  renderAuthUI();
+}
+
+// ── Owned apps ────────────────────────────────────────────────────────
+async function loadOwned(){
+  const { data, error } = await sb.from('entitlements')
+    .select('status,billing_type,max_sessions,expires_at,tools(slug,name)')
+    .eq('status', 'active');
+  const grid = document.getElementById('ownedGrid');
+  if (error || !data || data.length === 0){
+    grid.innerHTML = `<p class="empty-hint">ยังไม่มีเครื่องมือที่ซื้อ — เลือกซื้อได้ที่แคตตาล็อกด้านล่าง</p>`;
+    return;
+  }
+  grid.innerHTML = data.map(e => {
+    const t = e.tools || {};
+    const plan = BILLING_LABEL[e.billing_type] || e.billing_type || '-';
+    let expiry = 'ตลอดชีพ';
+    if (e.expires_at){
+      const days = Math.max(0, Math.ceil((new Date(e.expires_at) - new Date()) / 86400000));
+      expiry = `เหลืออีก ${days} วัน`;
+    }
+    return `
+      <div class="owned-card">
+        <span class="code">${stampCode(t.slug || '')} · ${plan}</span>
+        <h3>${t.name || t.slug}</h3>
+        <div class="expiry">${expiry}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── Catalog ───────────────────────────────────────────────────────────
+async function loadCatalog(){
+  const [{ data: tools, error: toolErr }, { data: prices, error: priceErr }] = await Promise.all([
+    sb.from('tools').select('id,slug,name,description,category').eq('is_active', true).order('name'),
+    sb.from('tool_prices').select('id,tool_id,billing_type,max_sessions,price_baht').eq('is_active', true),
+  ]);
+  if (toolErr || priceErr){
+    document.getElementById('catalog').innerHTML = `<p class="empty-hint">โหลดแคตตาล็อกไม่สำเร็จ — ลองรีเฟรชหน้าใหม่</p>`;
+    return;
+  }
+  toolsData = (tools || []).map(t => ({ ...t, prices: (prices || []).filter(p => p.tool_id === t.id) }))
+                            .filter(t => t.prices.length > 0);
+}
+
+function renderCatalog(){
+  const grid = document.getElementById('catalog');
+  const visible = toolsData.filter(t => activeCat === 'all' || t.category === activeCat);
+  if (visible.length === 0){
+    grid.innerHTML = `<p class="empty-hint">ยังไม่มีเครื่องมือเปิดขายในหมวดนี้</p>`;
+    return;
+  }
+  grid.innerHTML = '';
+  visible.forEach(t => grid.appendChild(renderCard(t)));
+}
+
+function renderCard(t){
+  // group prices: billing_type -> { sessions: priceRow }
+  const byBilling = {};
+  t.prices.forEach(p => {
+    byBilling[p.billing_type] = byBilling[p.billing_type] || {};
+    byBilling[p.billing_type][p.max_sessions] = p;
+  });
+  const billingOptions = Object.keys(byBilling);
+  const sel = { billing: billingOptions[0], sessions: Number(Object.keys(byBilling[billingOptions[0]])[0]) };
+
+  const el = document.createElement('div');
+  el.className = 'card';
+
+  const billingBtns = billingOptions.map(b =>
+    `<button data-plan="${b}" class="${b === sel.billing ? 'on' : ''}">${BILLING_LABEL[b] || b}</button>`
+  ).join('');
+
+  el.innerHTML = `
+    <div class="card-top"><span class="stamp-code">${stampCode(t.slug)}</span></div>
+    <h3>${t.name}</h3>
+    <p>${t.description || ''}</p>
+    <div class="toggle-label">รอบบิล</div>
+    <div class="plan-toggle">${billingBtns}</div>
+    <div class="toggle-label">จำนวนจอที่ใช้พร้อมกัน</div>
+    <div class="seat-toggle"></div>
+    <div class="price-row">
+      <span class="label">ราคา</span>
+      <span class="plan-price">฿<span class="amt"></span><span class="unit"></span></span>
+    </div>
+    <div class="card-actions">
+      <button class="btn-buy">ซื้อเลย</button>
+      <button class="btn-cart" title="เพิ่มลงตะกร้า">＋</button>
+    </div>
+  `;
+
+  const seatBox = el.querySelector('.seat-toggle');
+  const amt = el.querySelector('.amt');
+  const unit = el.querySelector('.unit');
+  const buyBtn = el.querySelector('.btn-buy');
+
+  function renderSeats(){
+    const sessionsAvail = Object.keys(byBilling[sel.billing]).map(Number).sort((a,b) => a - b);
+    if (!sessionsAvail.includes(sel.sessions)) sel.sessions = sessionsAvail[0];
+    seatBox.innerHTML = sessionsAvail.map(s =>
+      `<button data-seats="${s}" class="${s === sel.sessions ? 'on' : ''}">${s} จอ</button>`
+    ).join('');
+    seatBox.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      sel.sessions = Number(b.dataset.seats);
+      renderSeats();
+      renderPrice();
+    }));
+  }
+  function renderPrice(){
+    const row = byBilling[sel.billing][sel.sessions];
+    amt.textContent = money(row.price_baht);
+    unit.textContent = BILLING_UNIT[sel.billing] || '';
+  }
+  function currentRow(){ return byBilling[sel.billing][sel.sessions]; }
+
+  el.querySelectorAll('.plan-toggle button').forEach(b => b.addEventListener('click', () => {
+    el.querySelectorAll('.plan-toggle button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    sel.billing = b.dataset.plan;
+    renderSeats();
+    renderPrice();
+  }));
+
+  buyBtn.addEventListener('click', () => buyNow(t, currentRow()));
+  el.querySelector('.btn-cart').addEventListener('click', () => {
+    addToCart(t, currentRow());
+    showMsg(`เพิ่ม "${t.name}" ลงตะกร้าแล้ว`, 'ok');
+  });
+
+  renderSeats();
+  renderPrice();
+  return el;
+}
+
+document.getElementById('catbar').addEventListener('click', (e) => {
+  const btn = e.target.closest('.pill');
+  if (!btn) return;
+  document.querySelectorAll('#catbar .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat = btn.dataset.cat;
+  renderCatalog();
+});
+
+// ── Cart + checkout ───────────────────────────────────────────────────
+function saveCart(){ localStorage.setItem('ap_cart', JSON.stringify(cart)); }
+
+function addToCart(t, row){
+  cart.push({ tool_id: t.id, tool_name: t.name, price_id: row.id, billing_type: row.billing_type, max_sessions: row.max_sessions, price_baht: row.price_baht });
+  saveCart();
+  updateCartUI();
+}
+
+function removeFromCart(idx){
+  cart.splice(idx, 1);
+  saveCart();
+  updateCartUI();
+}
+
+function updateCartUI(){
+  const countEl = document.getElementById('cartCount');
+  if (countEl) countEl.textContent = cart.length;
+  const panel = document.getElementById('cartPanel');
+  if (!panel) return;
+  if (cart.length === 0){
+    panel.innerHTML = `<h3>ตะกร้าของคุณ</h3><div class="cart-empty">ยังไม่มีสินค้าในตะกร้า</div>`;
+    return;
+  }
+  const total = cart.reduce((s, i) => s + i.price_baht, 0);
+  panel.innerHTML = `
+    <h3>ตะกร้าของคุณ</h3>
+    ${cart.map((i, idx) => `
+      <div class="cart-item">
+        <div>
+          ${i.tool_name}
+          <div class="meta">${BILLING_LABEL[i.billing_type] || i.billing_type} · ${i.max_sessions} จอ · ฿${money(i.price_baht)}</div>
+        </div>
+        <button data-idx="${idx}" class="cart-remove" title="เอาออก">✕</button>
+      </div>`).join('')}
+    <div class="cart-total"><span>รวม</span><span>฿${money(total)}</span></div>
+    <button class="cart-checkout" id="cartCheckout">ยืนยันคำสั่งซื้อ</button>
+  `;
+  panel.querySelectorAll('.cart-remove').forEach(b => b.addEventListener('click', () => removeFromCart(Number(b.dataset.idx))));
+  document.getElementById('cartCheckout').addEventListener('click', checkout);
+}
+
+function toggleCartPanel(){
+  document.getElementById('cartPanel').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const panel = document.getElementById('cartPanel');
+  const btn = document.getElementById('cartBtn');
+  if (panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn){
+    panel.classList.remove('open');
+  }
+});
+
+async function createOrder(items){
+  // price is looked up server-side from tool_prices by create_order() —
+  // the browser only says WHICH combo was picked, never HOW MUCH it costs.
+  const payload = items.map(i => ({ tool_id: i.tool_id, billing_type: i.billing_type, max_sessions: i.max_sessions }));
+  const { data: orderId, error } = await sb.rpc('create_order', { p_items: payload });
+  if (error){ showMsg('สร้างคำสั่งซื้อไม่สำเร็จ: ' + error.message, 'err'); return null; }
+  return { id: orderId };
+}
+
+async function buyNow(t, row){
+  if (!currentUser){ openAuthModal('login'); return; }
+  const order = await createOrder([{ tool_id: t.id, billing_type: row.billing_type, max_sessions: row.max_sessions }]);
+  if (order) showMsg(`สร้างคำสั่งซื้อ "${t.name}" แล้ว (เลขที่ ${order.id.slice(0,8)}) — ทีมงานจะติดต่อเพื่อยืนยันการชำระเงินเร็วๆ นี้`, 'ok');
+}
+
+async function checkout(){
+  if (!currentUser){ openAuthModal('login'); return; }
+  if (cart.length === 0) return;
+  const order = await createOrder(cart);
+  if (order){
+    cart = [];
+    saveCart();
+    updateCartUI();
+    document.getElementById('cartPanel').classList.remove('open');
+    showMsg(`สร้างคำสั่งซื้อแล้ว (เลขที่ ${order.id.slice(0,8)}) — ทีมงานจะติดต่อเพื่อยืนยันการชำระเงินเร็วๆ นี้`, 'ok');
+  }
+}
+
+// ── boot ──────────────────────────────────────────────────────────────
+document.getElementById('loginBtn').addEventListener('click', () => openAuthModal('login'));
+
+(async function init(){
+  await refreshSession();
+  await loadCatalog();
+  renderCatalog();
+})();
+</script>
+</body>
+</html>
