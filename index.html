@@ -363,7 +363,13 @@ document.getElementById('loginSubmit').addEventListener('click', async () => {
   const errEl = document.getElementById('loginError');
   errEl.style.display = 'none';
   const { error } = await sb.auth.signInWithPassword({ email, password });
-  if (error){ errEl.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'; errEl.style.display=''; return; }
+  if (error){
+    errEl.textContent = error.message === 'Email not confirmed'
+      ? 'ยังไม่ได้ยืนยันอีเมล — เช็คอีเมลแล้วกดลิงก์ยืนยันก่อนเข้าสู่ระบบ'
+      : `เข้าสู่ระบบไม่สำเร็จ: ${error.message}`;
+    errEl.style.display = '';
+    return;
+  }
   await refreshSession();
   closeAuthModal();
   showMsg('เข้าสู่ระบบสำเร็จ', 'ok');
