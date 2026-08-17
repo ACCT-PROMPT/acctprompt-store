@@ -1,5 +1,7 @@
+import { ShoppingCart } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import { useCart } from '../lib/cart';
+import logo from '../assets/logo.png';
 
 interface Props {
   onOpenAuth: () => void;
@@ -11,11 +13,9 @@ export default function TopBar({ onOpenAuth, onOpenCart }: Props) {
   const { items } = useCart();
 
   return (
-    <div className="bg-gradient-to-br from-brand-700 to-brand-950 px-10 py-4 flex items-center gap-7">
-      <div className="font-serif font-bold text-2xl text-brand-100 flex items-center gap-2.5">
-        <span className="w-9 h-9 rounded-lg bg-brand-100 flex items-center justify-center font-extrabold text-brand-950 text-lg shrink-0">
-          A
-        </span>
+    <div className="bg-gradient-to-br from-brand-700 to-brand-950 px-10 py-4 flex items-center gap-7 border-b-2 border-teal-500/40">
+      <div className="font-serif font-bold text-2xl text-white flex items-center gap-2.5">
+        <img src={logo} alt="AcctPrompt" className="w-9 h-9 object-contain shrink-0" />
         AcctPrompt
       </div>
 
@@ -28,9 +28,10 @@ export default function TopBar({ onOpenAuth, onOpenCart }: Props) {
 
       <div className="flex items-center gap-5 text-brand-100 text-sm font-semibold ml-auto">
         <button type="button" onClick={onOpenCart} className="flex items-center gap-1.5">
-          🛒 ตะกร้า
+          <ShoppingCart size={17} />
+          ตะกร้า
           {items.length > 0 && (
-            <span className="bg-brand-100 text-brand-950 rounded-full text-[10.5px] font-extrabold px-1.5 py-0.5 min-w-4.5 text-center">
+            <span className="bg-teal-500 text-brand-950 rounded-full text-[10.5px] font-extrabold px-1.5 py-0.5 min-w-4.5 text-center">
               {items.length}
             </span>
           )}

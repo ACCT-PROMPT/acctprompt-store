@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../lib/auth';
 import { useEntitlements } from '../hooks/useEntitlements';
+import { toolIcon } from '../lib/toolIcons';
+import { categoryGradient } from '../lib/categories';
 
 function daysLeft(expiresAt: string | null): string {
   if (!expiresAt) return 'ตลอดชีพ';
@@ -77,6 +79,8 @@ export default function MyApps() {
         {entitlements.map((ent) => {
           const expiryLabel = daysLeft(ent.expires_at);
           const expired = expiryLabel === 'หมดอายุแล้ว';
+          const Icon = toolIcon(ent.tools.slug);
+          const gradient = categoryGradient(ent.tools.category);
           return (
             <a
               key={ent.id}
@@ -89,7 +93,11 @@ export default function MyApps() {
                   : 'opacity-60 cursor-not-allowed pointer-events-none'
               }`}
             >
-              <div className="text-2xl">{ent.tools.name.split(' ')[0]}</div>
+              <div
+                className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-sm`}
+              >
+                <Icon size={22} strokeWidth={2} />
+              </div>
               <div className="font-bold text-[15.5px] text-ink-900">
                 {ent.tools.name.replace(/^\S+\s/, '')}
               </div>

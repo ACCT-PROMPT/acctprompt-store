@@ -6,6 +6,7 @@ import MyApps from './components/MyApps';
 import ProductCard from './components/ProductCard';
 import AuthModal from './components/AuthModal';
 import CartDrawer from './components/CartDrawer';
+import Footer from './components/Footer';
 import { AuthProvider } from './lib/auth';
 import { CartProvider } from './lib/cart';
 import { useTools } from './hooks/useTools';
@@ -65,6 +66,8 @@ function StoreContent() {
           </div>
         )}
       </div>
+
+      <Footer />
 
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
       {showCart && (

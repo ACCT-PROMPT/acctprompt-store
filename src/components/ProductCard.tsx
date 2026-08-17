@@ -1,6 +1,9 @@
 import { useState } from 'react';
+import { Check, ShoppingCart } from 'lucide-react';
 import type { ToolWithPrices } from '../types';
 import { useCart } from '../lib/cart';
+import { toolIcon } from '../lib/toolIcons';
+import { categoryGradient } from '../lib/categories';
 
 interface Props {
   tool: ToolWithPrices;
@@ -18,6 +21,8 @@ export default function ProductCard({ tool, onAddedToCart, onBuyNow }: Props) {
   const price = cheapestMonthly(tool);
   const { addItem } = useCart();
   const [justAdded, setJustAdded] = useState(false);
+  const Icon = toolIcon(tool.slug);
+  const gradient = categoryGradient(tool.category);
 
   function handleAdd() {
     if (!price) return;
@@ -34,9 +39,13 @@ export default function ProductCard({ tool, onAddedToCart, onBuyNow }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-brand-100 shadow-sm hover:shadow-lg hover:-translate-y-1.5 transition-all duration-250 flex flex-col overflow-hidden">
+    <div className="bg-white rounded-2xl border border-brand-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-250 flex flex-col overflow-hidden group">
       <div className="p-5.5 flex flex-col gap-2.5 flex-1">
-        <div className="text-2xl">{tool.name.split(' ')[0]}</div>
+        <div
+          className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-250`}
+        >
+          <Icon size={22} strokeWidth={2} />
+        </div>
         <div className="font-bold text-[15.5px] text-ink-900">
           {tool.name.replace(/^\S+\s/, '')}
         </div>
@@ -64,7 +73,7 @@ export default function ProductCard({ tool, onAddedToCart, onBuyNow }: Props) {
             title="เพิ่มลงตะกร้า"
             className="w-11 h-10 flex items-center justify-center rounded-lg border-1.5 border-brand-500 text-brand-500 bg-white disabled:opacity-40"
           >
-            {justAdded ? '✓' : '🛒'}
+            {justAdded ? <Check size={18} /> : <ShoppingCart size={18} />}
           </button>
           <button
             type="button"

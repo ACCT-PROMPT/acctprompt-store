@@ -4,13 +4,19 @@
   --font-sans: "Noto Sans Thai", sans-serif;
   --font-serif: "Noto Serif Thai", serif;
 
-  --color-brand-950: #2e1760;
-  --color-brand-700: #4b2a8c;
-  --color-brand-500: #7c3aed;
+  --color-brand-950: #2c1656;
+  --color-brand-700: #5f3197;
+  --color-brand-500: #8354c4;
   --color-brand-300: #c4b5fd;
   --color-brand-200: #ddd6fe;
   --color-brand-100: #e4d9fa;
   --color-brand-50: #f3f0fb;
+
+  --color-teal-700: #12966d;
+  --color-teal-500: #2fe0ae;
+  --color-teal-400: #5fe8c1;
+  --color-teal-300: #8cf1d1;
+  --color-teal-100: #d8fbef;
 
   --color-ink-900: #12203a;
   --color-ink-700: #3d4a5c;
