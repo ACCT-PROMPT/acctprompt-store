@@ -28,6 +28,9 @@ interface AuthContextValue {
     fullName: string,
   ) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
+  passwordRecovery: boolean;
+  resetPassword: (email: string) => Promise<{ error: string | null }>;
+  updatePassword: (newPassword: string) => Promise<{ error: string | null }>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -36,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
 
   async function loadCustomer(userId: string) {
     const { data, error } = await supabase
@@ -54,7 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
       setSession(newSession);
       if (newSession?.user) loadCustomer(newSession.user.id);
       else setCustomer(null);
@@ -81,6 +86,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   }
 
+  async function resetPassword(email: string) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    });
+    return { error: error?.message ?? null };
+  }
+
+  async function updatePassword(newPassword: string) {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (!error) setPasswordRecovery(false);
+    return { error: error?.message ?? null };
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -91,6 +109,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signUp,
         signOut,
+        passwordRecovery,
+        resetPassword,
+        updatePassword,
       }}
     >
       {children}

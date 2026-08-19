@@ -5,14 +5,16 @@ import Hero from './components/Hero';
 import MyApps from './components/MyApps';
 import ProductCard from './components/ProductCard';
 import AuthModal from './components/AuthModal';
+import ResetPasswordModal from './components/ResetPasswordModal';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
-import { AuthProvider } from './lib/auth';
+import { AuthProvider, useAuth } from './lib/auth';
 import { CartProvider } from './lib/cart';
 import { useTools } from './hooks/useTools';
 
 function StoreContent() {
   const { tools, loading, error } = useTools();
+  const { passwordRecovery } = useAuth();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [showCart, setShowCart] = useState(false);
@@ -69,7 +71,11 @@ function StoreContent() {
 
       <Footer />
 
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+      {passwordRecovery ? (
+        <ResetPasswordModal />
+      ) : (
+        showAuth && <AuthModal onClose={() => setShowAuth(false)} />
+      )}
       {showCart && (
         <CartDrawer
           onClose={() => setShowCart(false)}
